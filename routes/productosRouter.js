@@ -1,71 +1,74 @@
 const express = require("express");
 const productosRouter = express.Router();
 
-const products = [];
+const productos = [];
 
 productosRouter.get("/", (req, res) => {
-  const productStr = JSON.stringify(products, null, 3);
+  const productosStr = JSON.stringify(productos, null, 2);
   res.type("json");
   productos.length === 0
-    ? res.json({ message: "No hay productos agregados" })
-    : res.send(productStr);
+    ? res.json({ Mensaje: "No hay productos para mostrar" })
+    : res.send(productosStr);
 });
 
-productosRouter.get("/api/productos/:id", (req, res) => {
+productosRouter.get("/:id", (req, res) => {
   if (isNaN(req.params.id)) {
-    res.json({ Error: "Ingrese un numero" });
+    res.json({ "Mensaje error": "Por favor ingrese un numero" });
   } else {
-    const productById = productos.findIndexOf((i) => i.id == req.params.id);
-    const productStr = JSON.stringify(products[productById], null, 2);
+    const productoById = productos.findIndex((i) => i.id == req.params.id);
+    const productosStr = JSON.stringify(productos[productoById], null, 2);
     res.type("json");
-    productById !== -1
-      ? res.send(productStr)
-      : res.json({ message: "No se encontro el producto" });
+    productoById !== -1
+      ? res.send(productosStr)
+      : res.json({ "Mensaje error": "Producto no encontrado" });
   }
 });
-//recibe y agrega un producto, y lo devuelve con su id asignado.
-productosRouter.post("/api/productos", (req, res) => {
-  let lastItem = products.length - 1;
-  lastItem = products[lastItem];
+
+productosRouter.post("/", (req, res) => {
+  let lastItem = productos.length - 1;
+  lastItem = productos[lastItem];
   if (lastItem == undefined) {
     req.body.id = 1;
-    products.push(req.body);
+    productos.push(req.body);
   } else {
     const id = lastItem.id + 1;
     req.body.id = id;
-    products.push(req.body);
+    productos.push(req.body);
   }
-  const productStr = JSON.stringify(products, null, 3);
+
+  const productosStr = JSON.stringify(req.body, null, 2);
   res.type("json");
-  res.send(`message: Producto agregado con exito ${productStr}`);
+  res.send(`Mensaje: Producto agregado correctamente 
+${productosStr}`);
 });
 
-//recibe y actualiza un producto según su id.
-productosRouter.put("/api/productos/:id", (req, res) => {
-
-    const index = products.findIndex(i => i.id == req.body.id)
-    if(index !== -1){
-
-        products[index] = req.body
-        res.json({
-            'mensaje' : 'Producto actualizado correctamente',
-            products : products[index]
-        })
-    }else{
-        res.json({'message error':'no se encontro el producto'})
-    }
+productosRouter.put("/", (req, res) => {
+  const index = productos.findIndex((i) => i.id == req.body.id);
+  if (index !== -1) {
+    productos[index] = req.body;
+    res.json({
+      Mensaje: "Producto actualizado correctamente",
+      producto: productos[index],
+    });
+  } else {
+    res.json({
+      "Mensaje error": "No se pudo actualizar, producto no encontrado",
+    });
+  }
 });
-productosRouter.delete("/api/productos/:id", (req, res) => {
 
-  if(isNaN(req.params.id)){
-    res.json({'message':'Ingrese un numero'})
-  }else{
-    const index = products.findIndex(i => i.id == req.params.id)
-    if (index !== -1){
-    productos.splice(index,1)
-    res.json({'Mensaje': 'Producto eliminado con exito'})
-    }else{
-      res.json({'Message' : 'No se pudo eliminar ya que no se encontro el producto seleccionado'})
+productosRouter.delete("/:id", (req, res) => {
+  if (isNaN(req.params.id)) {
+    res.json({ "Mensaje error": "Por favor ingrese un numero" });
+  } else {
+    const index = productos.findIndex((i) => i.id == req.params.id);
+    if (index !== -1) {
+      productos.splice(index, 1);
+      res.json({ Mensaje: "Producto eliminado correctamente" });
+    } else {
+      res.json({
+        "Mensaje error": "No se pudo eliminar, producto no encontrado",
+      });
     }
   }
 });
