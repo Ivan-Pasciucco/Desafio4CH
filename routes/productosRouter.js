@@ -13,14 +13,14 @@ productosRouter.get("/", (req, res) => {
 
 productosRouter.get("/:id", (req, res) => {
   if (isNaN(req.params.id)) {
-    res.json({ "Mensaje error": "Por favor ingrese un numero" });
+    res.json({ "error": "Por favor ingrese un numero" });
   } else {
     const productoById = productos.findIndex((i) => i.id == req.params.id);
     const productosStr = JSON.stringify(productos[productoById], null, 2);
     res.type("json");
     productoById !== -1
       ? res.send(productosStr)
-      : res.json({ "Mensaje error": "Producto no encontrado" });
+      : res.json({ "error": "Producto no encontrado" });
   }
 });
 
@@ -52,14 +52,14 @@ productosRouter.put("/", (req, res) => {
     });
   } else {
     res.json({
-      "Mensaje error": "No se pudo actualizar, producto no encontrado",
+      "error": "No se pudo actualizar, producto no encontrado",
     });
   }
 });
 
 productosRouter.delete("/:id", (req, res) => {
   if (isNaN(req.params.id)) {
-    res.json({ "Mensaje error": "Por favor ingrese un numero" });
+    res.json({ "error": "Por favor ingrese un numero" });
   } else {
     const index = productos.findIndex((i) => i.id == req.params.id);
     if (index !== -1) {
@@ -67,7 +67,7 @@ productosRouter.delete("/:id", (req, res) => {
       res.json({ Mensaje: "Producto eliminado correctamente" });
     } else {
       res.json({
-        "Mensaje error": "No se pudo eliminar, producto no encontrado",
+        "error": "No se pudo eliminar, producto no encontrado",
       });
     }
   }
